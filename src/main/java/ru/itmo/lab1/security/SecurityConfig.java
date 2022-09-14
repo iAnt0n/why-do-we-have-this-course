@@ -29,8 +29,10 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers("/users/**").hasRole("ADMIN")
-                .antMatchers("/test/**").permitAll()
-                .antMatchers("/market/**").hasAnyRole("ADMIN", "TRADER")
+                .antMatchers("/instrument/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
+                .antMatchers("/market/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
+                .antMatchers("/marketInstrumentId/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
+                .antMatchers("/portfolio/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
                 .anyRequest().authenticated();
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

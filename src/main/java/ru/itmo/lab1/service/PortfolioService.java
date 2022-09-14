@@ -41,6 +41,11 @@ public class PortfolioService {
         return portfolioRepository.findAll(pageable).map(portfolio -> modelMapper.map(portfolio, PortfolioDto.class));
     }
 
+    public Page<PortfolioDto> findAllByIdUser(UUID id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return portfolioRepository.findAllByIdUserId(id, pageable).map(portfolio -> modelMapper.map(portfolio, PortfolioDto.class));
+    }
+
     public PortfolioDto findById(UUID id) {
         return portfolioRepository.findById(id).map(portfolio -> modelMapper.map(portfolio, PortfolioDto.class)).orElseThrow(
                 () -> new PortfolioNotFoundException(id)
