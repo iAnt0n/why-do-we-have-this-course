@@ -2,6 +2,7 @@ package ru.itmo.lab1.controller.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,11 +33,18 @@ public class LabExceptionHandler {
             MarketInstrumentIdNotFoundException.class,
             OrderNotFoundException.class,
             TradeNotFoundException.class,
-            PortfolioNotFoundException.class
+            PortfolioNotFoundException.class,
+            UserNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String objectNotFoundException(Exception ex) {
         return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void badCredentialsException(Exception ex) {
     }
     //TODO add other exception handlers
 }
