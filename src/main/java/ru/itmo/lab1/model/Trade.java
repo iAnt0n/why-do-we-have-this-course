@@ -26,6 +26,10 @@ public class Trade {
     private MarketInstrumentId idMiid;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user", nullable = false)
+    private User idUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_order")
     private Order idOrder;
 

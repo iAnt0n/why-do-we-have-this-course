@@ -30,6 +30,10 @@ public class Order {
     @JoinColumn(name = "id_miid")
     private MarketInstrumentId idMiid;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user", nullable = false)
+    private User idUser;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus status;
