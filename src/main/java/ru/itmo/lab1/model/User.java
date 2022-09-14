@@ -28,8 +28,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private String role;
+    private Role role;
 
     @OneToMany(mappedBy = "idUser")
     private Set<Portfolio> portfolios = new LinkedHashSet<>();

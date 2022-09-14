@@ -6,3 +6,5 @@ spring:
       pageable:
         default-page-size: 50
 
+jwt:
+  secret: "SS1GVUNLSU5HLUxPVkUtU1BSSU5HLUFORC1IT1ctSVQtSVMtTElURVJBTExZLU1BR0lDQUxMWS1XT1JLUy1BTkQtRkFJTFMtV0lUSC1DUllQVElELUVYQ0VQVElPTlM="
