@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.lab1.controller.exception.TradeManualCreationException;
 import ru.itmo.lab1.controller.exception.TradeNotFoundException;
 import ru.itmo.lab1.model.Portfolio;
@@ -32,6 +31,11 @@ public class TradeService {
         return tradeRepository.findById(id).map(trade -> modelMapper.map(trade, TradeDto.class)).orElseThrow(
                 () -> new TradeNotFoundException(id)
         );
+    }
+
+    public Page<TradeDto> findAllByIdUser(UUID id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return tradeRepository.findAllByIdUserId(id, pageable).map(trade -> modelMapper.map(trade, TradeDto.class));
     }
 
     public TradeDto createExternal(TradeDto dto) {

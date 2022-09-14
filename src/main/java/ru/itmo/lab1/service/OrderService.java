@@ -38,6 +38,11 @@ public class OrderService {
         );
     }
 
+    public Page<OrderDto> findAllByIdUser(UUID id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAllByIdUserId(id, pageable).map(order -> modelMapper.map(order, OrderDto.class));
+    }
+
     public OrderDto create(OrderDto dto) {
         Order order = modelMapper.map(dto, Order.class);
         order.setId(UUID.randomUUID());
