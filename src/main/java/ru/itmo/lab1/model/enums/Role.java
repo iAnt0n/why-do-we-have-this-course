@@ -1,4 +1,4 @@
-package ru.itmo.lab1.model;
+package ru.itmo.lab1.model.enums;
 
 public enum Role {
     ROLE_ADMIN,

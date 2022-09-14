@@ -1,10 +1,8 @@
 package ru.itmo.lab1.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itmo.lab1.model.Role;
+import ru.itmo.lab1.model.enums.Role;
 
 import java.io.Serializable;
 import java.util.UUID;
