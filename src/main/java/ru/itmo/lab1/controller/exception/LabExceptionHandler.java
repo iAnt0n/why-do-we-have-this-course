@@ -12,13 +12,30 @@ public class LabExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public void runtimeException(Exception ex) {}
 
     @ResponseBody
-    @ExceptionHandler(MarketNotFoundException.class)
+    @ExceptionHandler({
+            OrderStatusConflictException.class,
+            TradeManualCreationException.class
+    })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String conflictExceptionWithMessage(Exception ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler({
+            MarketNotFoundException.class,
+            InstrumentNotFoundException.class,
+            MarketInstrumentIdNotFoundException.class,
+            OrderNotFoundException.class,
+            TradeNotFoundException.class,
+            PortfolioNotFoundException.class
+    })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String marketNotFoundException(Exception ex) {
+    public String objectNotFoundException(Exception ex) {
         return ex.getMessage();
     }
     //TODO add other exception handlers

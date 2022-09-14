@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.itmo.lab1.model.enums.InstrumentStatus;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -25,8 +26,9 @@ public class Instrument {
     @Column(name = "isin", nullable = false, length = 12)
     private String isin;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private InstrumentStatus status;
 
     @OneToMany(mappedBy = "idInstrument")
     private Set<MarketInstrumentId> marketInstruments = new LinkedHashSet<>();
