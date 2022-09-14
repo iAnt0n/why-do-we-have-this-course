@@ -1,7 +1,7 @@
 package ru.itmo.lab1.model.dto;
 
 import lombok.*;
-import ru.itmo.lab1.model.MIC;
+import ru.itmo.lab1.model.enums.MIC;
 
 import java.io.Serializable;
 import java.util.UUID;

@@ -10,9 +10,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class PortfolioDto implements Serializable {
-    private UUID id;
-    private UUID idUserId;
+public class PortfolioPatchDto implements Serializable {
     private String name;
     private Set<UUID> trades = new HashSet<>();
 }

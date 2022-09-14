@@ -11,7 +11,6 @@ import ru.itmo.lab1.model.Market;
 import ru.itmo.lab1.model.dto.MarketDto;
 import ru.itmo.lab1.repository.MarketRepository;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,22 +24,15 @@ public class MarketService {
         return marketRepository.findAll(pageable).map(market -> modelMapper.map(market, MarketDto.class));
     }
 
-    public MarketDto save(MarketDto marketDTO) {
+    public MarketDto findById(UUID id) {
+        return marketRepository.findById(id).map(market -> modelMapper.map(market, MarketDto.class)).orElseThrow(
+                () -> new MarketNotFoundException(id)
+        );
+    }
+
+    public MarketDto create(MarketDto marketDTO) {
         Market market = modelMapper.map(marketDTO, Market.class);
         market.setId(UUID.randomUUID());
         return modelMapper.map(marketRepository.save(market), MarketDto.class);
-    }
-
-    public void delete(UUID id) {
-        Market market = marketRepository.findById(id).orElseThrow(() -> new MarketNotFoundException(id));
-        marketRepository.delete(market);
-    }
-
-    public MarketDto modify(MarketDto marketDto) {
-        if (!marketRepository.existsById(marketDto.getId())) {
-            throw new MarketNotFoundException(marketDto.getId());
-        }
-        Market market = marketRepository.save(modelMapper.map(marketDto, Market.class));
-        return modelMapper.map(market, MarketDto.class);
     }
 }

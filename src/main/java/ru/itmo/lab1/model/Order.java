@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.itmo.lab1.model.enums.OrderStatus;
+import ru.itmo.lab1.model.enums.OrderType;
+import ru.itmo.lab1.model.enums.Side;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -27,11 +30,13 @@ public class Order {
     @JoinColumn(name = "id_miid")
     private MarketInstrumentId idMiid;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "order_type", nullable = false)
-    private String orderType;
+    private OrderType orderType;
 
     @Column(name = "volume", nullable = false)
     private Integer volume;
@@ -44,4 +49,8 @@ public class Order {
 
     @Column(name = "created_datetime", nullable = false)
     private Instant createdDatetime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "side", nullable = false)
+    private Side side;
 }

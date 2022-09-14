@@ -29,6 +29,11 @@ public class Portfolio {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "idPortfolio")
+    @OneToMany(mappedBy = "idPortfolio", cascade = {CascadeType.PERSIST})
     private Set<Trade> trades = new LinkedHashSet<>();
+
+    @PreRemove
+    private void preRemove() {
+        trades.forEach( child -> child.setIdPortfolio(null));
+    }
 }

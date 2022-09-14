@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.itmo.lab1.model.enums.MIC;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
