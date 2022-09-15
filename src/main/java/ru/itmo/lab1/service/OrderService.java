@@ -102,6 +102,7 @@ public class OrderService {
                 tradeDto.setPrice(order.getPrice());
                 tradeDto.setVolume(order.getVolume());
                 tradeDto.setIdOrderId(order.getId());
+                tradeDto.setIdUserId(order.getIdUser().getId());
 
                 tradeService.create(tradeDto);
             }

@@ -33,6 +33,8 @@ public class SecurityConfig {
                 .antMatchers("/market/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
                 .antMatchers("/marketInstrumentId/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
                 .antMatchers("/portfolio/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
+                .antMatchers("/order/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
+                .antMatchers("/trade/**").hasAnyRole("ADMIN", "TRADER", "MAINTAINER")
                 .anyRequest().authenticated();
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

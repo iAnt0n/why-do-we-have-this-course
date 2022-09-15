@@ -67,6 +67,9 @@ public class TradeController {
     @PostMapping
     public ResponseEntity<TradeDto> createTrade(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
                                                 @RequestBody TradeDto trade) {
+        if (trade.getIdUserId() == null) {
+            trade.setIdUserId(getUser(header).getId());
+        }
 
         return isAllowed(getUser(header), trade.getIdUserId()) ?
                 new ResponseEntity<>(tradeService.createExternal(trade), HttpStatus.CREATED) :
