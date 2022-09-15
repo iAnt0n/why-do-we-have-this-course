@@ -67,6 +67,10 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
                                                 @RequestBody OrderDto order) {
+        if (order.getIdUserId() == null) {
+            order.setIdUserId(getUser(header).getId());
+        }
+
         return isAllowed(getUser(header), order.getIdUserId()) ?
                 new ResponseEntity<>(orderService.create(order), HttpStatus.CREATED) :
                 new ResponseEntity<>(HttpStatus.FORBIDDEN);

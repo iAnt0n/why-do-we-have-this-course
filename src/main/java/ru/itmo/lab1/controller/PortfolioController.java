@@ -67,6 +67,10 @@ public class PortfolioController {
     @PostMapping
     public ResponseEntity<PortfolioDto> createPortfolio(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
                                              @RequestBody PortfolioDto portfolio) {
+        if (portfolio.getIdUserId() == null) {
+            portfolio.setIdUserId(getUser(header).getId());
+        }
+
         return isAllowed(getUser(header), portfolio.getIdUserId()) ?
                 new ResponseEntity<>(portfolioService.create(portfolio), HttpStatus.CREATED) :
                 new ResponseEntity<>(HttpStatus.FORBIDDEN);

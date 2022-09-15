@@ -1,0 +1,5 @@
+id,name,password,role
+811613d7-cf6d-47ec-9f43-5cbf83aae4f5,test_admin,$2a$10$D/6ElBRSq78Ufxw0A23uAOrYxcX1w/3suwzn1aGHFYqvHsIwZVEpm,ROLE_ADMIN
+13ae3a70-740c-4155-88f0-f23e855d9429,test_maintainer,$2a$10$D/6ElBRSq78Ufxw0A23uAOrYxcX1w/3suwzn1aGHFYqvHsIwZVEpm,ROLE_MAINTAINER
+d8962635-cbe1-44c6-97cb-313fff7aad15,test_trader,$2a$10$D/6ElBRSq78Ufxw0A23uAOrYxcX1w/3suwzn1aGHFYqvHsIwZVEpm,ROLE_TRADER
+a3661347-ad2d-4628-8339-99e9c449340e,test_trader2,$2a$10$D/6ElBRSq78Ufxw0A23uAOrYxcX1w/3suwzn1aGHFYqvHsIwZVEpm,ROLE_TRADER
