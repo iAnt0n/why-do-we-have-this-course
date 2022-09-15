@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.itmo.lab1.model.enums.Role;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -31,6 +32,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
+
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted;
 
     @OneToMany(mappedBy = "idUser")
     private Set<Portfolio> portfolios = new LinkedHashSet<>();

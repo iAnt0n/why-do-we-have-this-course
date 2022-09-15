@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.lab1.model.dto.PortfolioDto;
 import ru.itmo.lab1.model.dto.PortfolioPatchDto;
@@ -33,14 +32,12 @@ public class PortfolioController {
     public ResponseEntity<Object> findAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
                                           @RequestParam(value = "page", defaultValue = "0") Integer page,
                                           @RequestParam(value = "size", required = false) Integer size) {
-        String token = jwtUtils.getJwtToken(header).orElseThrow(()->new RuntimeException("Not valid header"));
-        String name = jwtUtils.getUserName(token);
-        UserDetailsImpl user = (UserDetailsImpl) userDetailService.loadUserByUsername(name);
+        UserDetailsImpl user = getUser(header);
         String authority = user.getAuthorities().iterator().next().getAuthority();
-        boolean maintainer = authority.equals("ROLE_ADMIN") || authority.equals("ROLE_MAINTAINER");
+        boolean highAuth = authority.equals("ROLE_ADMIN") || authority.equals("ROLE_MAINTAINER");
 
         boolean isInfiniteScroll = size == null;
-        Page<PortfolioDto> portfolioPage = maintainer ?
+        Page<PortfolioDto> portfolioPage = highAuth ?
                 portfolioService.findAll(page, isInfiniteScroll ? defaultPageSize : size) :
                 portfolioService.findAllByIdUser(user.getId(), page, isInfiniteScroll ? defaultPageSize : size);
 
@@ -59,23 +56,51 @@ public class PortfolioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PortfolioDto> findById(@PathVariable UUID id) {
-        return ResponseEntity.ok(portfolioService.findById(id));
+    public ResponseEntity<PortfolioDto> findById(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
+                                                 @PathVariable UUID id) {
+        PortfolioDto portfolioDto = portfolioService.findById(id);
+        return isAllowed(getUser(header), portfolioDto.getId()) ?
+                ResponseEntity.ok(portfolioDto) :
+                new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @PostMapping
-    public ResponseEntity<PortfolioDto> createPortfolio(@RequestBody PortfolioDto portfolio) {
-        return new ResponseEntity<>(portfolioService.create(portfolio), HttpStatus.CREATED);
+    public ResponseEntity<PortfolioDto> createPortfolio(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
+                                             @RequestBody PortfolioDto portfolio) {
+        return isAllowed(getUser(header), portfolio.getIdUserId()) ?
+                new ResponseEntity<>(portfolioService.create(portfolio), HttpStatus.CREATED) :
+                new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePortfolio(@PathVariable UUID id) {
+    public ResponseEntity<?> deletePortfolio(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
+                                             @PathVariable UUID id) {
+        if (isAllowed(getUser(header), id)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         portfolioService.delete(id);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PortfolioDto> patchPortfolio(@PathVariable UUID id, @RequestBody PortfolioPatchDto patch) {
+    public ResponseEntity<PortfolioDto> patchPortfolio(@RequestHeader(HttpHeaders.AUTHORIZATION) String header,
+                                                       @PathVariable UUID id, @RequestBody PortfolioPatchDto patch) {
+        if (!isAllowed(getUser(header), id)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return ResponseEntity.ok(portfolioService.update(id, patch));
+    }
+
+    private UserDetailsImpl getUser(String header) {
+        String token = jwtUtils.getJwtToken(header).orElseThrow(() -> new RuntimeException("Not valid header"));
+        String name = jwtUtils.getUserName(token);
+        return (UserDetailsImpl) userDetailService.loadUserByUsername(name);
+    }
+
+    private boolean isAllowed(UserDetailsImpl user, UUID id) {
+        String authority = user.getAuthorities().iterator().next().getAuthority();
+        boolean highAuth = authority.equals("ROLE_ADMIN");
+        boolean isSameUser = id.equals(user.getId());
+        return highAuth || isSameUser;
     }
 }

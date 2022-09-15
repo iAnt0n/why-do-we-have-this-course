@@ -38,10 +38,17 @@ public class OrderService {
         );
     }
 
+    public Page<OrderDto> findAllByIdUser(UUID id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAllByIdUserId(id, pageable).map(order -> modelMapper.map(order, OrderDto.class));
+    }
+
     public OrderDto create(OrderDto dto) {
         Order order = modelMapper.map(dto, Order.class);
         order.setId(UUID.randomUUID());
-
+        if (order.getCreatedDatetime() == null) {
+            order.setCreatedDatetime(Instant.now());
+        }
         return switch (dto.getStatus()) {
             case CANCELLED, REJECTED, FULFILLED -> throw new OrderStatusConflictException(order.getId(), Optional.empty(), order.getStatus());
             case ACTIVE -> modelMapper.map(orderRepository.save(order), OrderDto.class);
@@ -91,7 +98,6 @@ public class OrderService {
                 order = orderRepository.save(order);
 
                 TradeDto tradeDto = new TradeDto();
-                tradeDto.setCreatedDatetime(Instant.now());
                 tradeDto.setIdMiid(modelMapper.map(order.getIdMiid(), MarketInstrumentIdDto.class));
                 tradeDto.setPrice(order.getPrice());
                 tradeDto.setVolume(order.getVolume());

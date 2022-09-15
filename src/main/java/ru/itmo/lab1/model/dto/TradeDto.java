@@ -12,6 +12,7 @@ import java.util.UUID;
 public class TradeDto implements Serializable {
     private UUID id;
     private MarketInstrumentIdDto idMiid;
+    private UUID idUserId;
     private UUID idOrderId;
     private UUID idPortfolioId;
     private Integer volume;
