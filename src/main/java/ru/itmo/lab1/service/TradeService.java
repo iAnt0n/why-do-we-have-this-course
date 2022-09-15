@@ -13,6 +13,7 @@ import ru.itmo.lab1.model.Trade;
 import ru.itmo.lab1.model.dto.TradeDto;
 import ru.itmo.lab1.repository.TradeRepository;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,13 +43,15 @@ public class TradeService {
         if (dto.getIdPortfolioId() != null || dto.getIdOrderId() != null) {
             throw new TradeManualCreationException();
         }
-
         return create(dto);
     }
 
     public TradeDto create(TradeDto dto) {
         Trade trade = modelMapper.map(dto, Trade.class);
         trade.setId(UUID.randomUUID());
+        if (trade.getCreatedDatetime()==null) {
+            trade.setCreatedDatetime(Instant.now());
+        }
         return modelMapper.map(tradeRepository.save(trade), TradeDto.class);
     }
 
