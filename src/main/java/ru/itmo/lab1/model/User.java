@@ -33,6 +33,9 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted;
+
     @OneToMany(mappedBy = "idUser")
     private Set<Portfolio> portfolios = new LinkedHashSet<>();
 }

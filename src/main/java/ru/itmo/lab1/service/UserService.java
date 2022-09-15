@@ -27,8 +27,9 @@ public class UserService {
     }
 
     public void delete(UUID id) {
-        User market = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        userRepository.delete(market);
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 
     public boolean register(UserDto userDto) {
