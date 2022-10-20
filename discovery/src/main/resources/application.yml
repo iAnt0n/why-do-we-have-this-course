@@ -10,4 +10,4 @@ spring:
     config:
       label: master
   config:
-    import: "configserver:http://${config.host}:${config.port}"
+    import: "configserver:${config.url}"
