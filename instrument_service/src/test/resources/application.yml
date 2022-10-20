@@ -1,0 +1,9 @@
+eureka:
+  client:
+    enabled: false
+spring:
+  cloud:
+    config:
+      enabled: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
