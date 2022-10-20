@@ -1,0 +1,13 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: discovery
+  profiles:
+    active: dev
+  cloud:
+    config:
+      label: master
+  config:
+    import: "configserver:http://${config.host}:${config.port}"
