@@ -1,0 +1,18 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: configserver
+  cloud:
+    config:
+      server:
+        git:
+          uri: http://labvm-42-05.itmo-lab.cosm-lab.science/team-5/config-repo.git
+          skipSslValidation: true
+          username: name
+          password: pass
+
+management:
+  endpoint:
+    health:
+      enabled: true

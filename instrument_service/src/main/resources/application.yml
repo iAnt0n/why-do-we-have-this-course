@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: instrument-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      label: master
+  config:
+    import: "configserver:${config.url}"
