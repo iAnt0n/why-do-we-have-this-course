@@ -16,15 +16,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MarketService {
     private MarketRepository marketRepository;
-    private ModelMapper modelMapper;
 
     public Page<MarketDto> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return marketRepository.findAll(pageable).map(market -> modelMapper.map(market, MarketDto.class));
+        return marketRepository.findAll(pageable);
     }
 
     public MarketDto findById(UUID id) {
-        return marketRepository.findById(id).map(market -> modelMapper.map(market, MarketDto.class)).orElseThrow(
+        return marketRepository.findById(id).orElseThrow(
                 () -> new MarketNotFoundException(id)
         );
     }
