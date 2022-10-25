@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 import ru.itmo.lab2.market_instrument_id_service.client.InstrumentServiceClient;
+import ru.itmo.lab2.market_instrument_id_service.controller.exception.InstrumentNotFoundException;
 import ru.itmo.lab2.market_instrument_id_service.model.MarketInstrumentId;
 import ru.itmo.lab2.market_instrument_id_service.model.dto.InstrumentDto;
 import ru.itmo.lab2.market_instrument_id_service.model.dto.InstrumentPatchDto;
@@ -30,7 +31,6 @@ public class MarketInstrumentIdService {
     private ModelMapper modelMapper;
     private InstrumentServiceClient instrumentServiceClient;
 
-    @HystrixCommand(fallbackMethod = "findAllDefault")
     public Mono<Page<MarketInstrumentIdDto>> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return marketInstrumentIdRepository.findAllBy(pageable)
@@ -40,20 +40,10 @@ public class MarketInstrumentIdService {
                 .map(t -> new PageImpl<>(t.getT1(), pageable, t.getT2()));
     }
 
-    public Mono<Page<MarketInstrumentIdDto>> findAllDefault(int page, int size) {
-        return Mono.just(new PageImpl<>(new ArrayList<>(),PageRequest.of(page, size),0));
-    }
-
-    @HystrixCommand(fallbackMethod = "findByIdDefault")
     public Mono<MarketInstrumentIdDto> findById(UUID id) {
         return marketInstrumentIdRepository.findById(id).map(miid -> modelMapper.map(miid, MarketInstrumentIdDto.class));
     }
 
-    public Mono<MarketInstrumentIdDto> findByIdDefault(UUID id) {
-        return Mono.just(new MarketInstrumentIdDto());
-    }
-
-    @HystrixCommand(fallbackMethod = "createDefault")
     @Transactional
     public Mono<MarketInstrumentIdDto> create(MarketInstrumentIdDto dto) {
         MarketInstrumentId marketInstrumentId = modelMapper.map(dto, MarketInstrumentId.class);
@@ -65,11 +55,8 @@ public class MarketInstrumentIdService {
                             : InstrumentStatus.MULTILISTED;
                     return instrumentServiceClient.patchInstrument(instrumentId, new InstrumentPatchDto(status));
                 })
+                .switchIfEmpty(Mono.error(new InstrumentNotFoundException(instrumentId)))
                 .flatMap(instrumentDto -> saveMarketInstId(marketInstrumentId));
-    }
-
-    public Mono<MarketInstrumentIdDto> createDefault(MarketInstrumentIdDto dto) {
-        return Mono.just(dto);
     }
 
     private Mono<MarketInstrumentIdDto> saveMarketInstId(MarketInstrumentId marketInstrumentId) {
@@ -77,21 +64,17 @@ public class MarketInstrumentIdService {
                 Mono.just(modelMapper.map(marketInstrument, MarketInstrumentIdDto.class)));
     }
 
-    @HystrixCommand(fallbackMethod = "deleteDefault")
     @Transactional
     public Mono<Void> delete(UUID id) {
         return marketInstrumentIdRepository.findById(id)
                 .flatMap(marketInstrumentId -> instrumentServiceClient.findById(marketInstrumentId.getIdInstrument())
-                        .map(this::patchInstrument).thenReturn(marketInstrumentId))
+                        .map(this::patchInstrument).thenReturn(marketInstrumentId)
+                        .switchIfEmpty(Mono.error(new InstrumentNotFoundException(marketInstrumentId.getIdInstrument()))))
                 .flatMap(marketInstrumentId -> {
                     marketInstrumentId.setDeleted(true);
                     return marketInstrumentIdRepository.save(marketInstrumentId);
                 })
                 .then();
-    }
-
-    public Mono<Void> deleteDefault(UUID id) {
-        return Mono.empty();
     }
 
     private Mono<InstrumentDto> patchInstrument(InstrumentDto instrumentDto) {

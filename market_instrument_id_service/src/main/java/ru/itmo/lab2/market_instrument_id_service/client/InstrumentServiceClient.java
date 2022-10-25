@@ -9,13 +9,8 @@ import ru.itmo.lab2.market_instrument_id_service.model.dto.InstrumentPatchDto;
 
 import java.util.UUID;
 
-@ReactiveFeignClient("INSTRUMENT-SERVICE")
+@ReactiveFeignClient(name = "INSTRUMENT-SERVICE", fallback = InstrumentServiceClientFallback.class)
 public interface InstrumentServiceClient {
-
-//    @GetMapping("/instrument")
-//    Mono<ResponseEntity<?>> findAll(@RequestParam(value = "page", defaultValue = "0") Integer page,
-//                                    @RequestParam(value = "size", required = false) Integer size);
-
     @GetMapping("/instrument/{id}")
     Mono<InstrumentDto> findById(@PathVariable("id") UUID id);
 
