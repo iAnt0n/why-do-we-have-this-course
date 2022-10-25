@@ -1,0 +1,62 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: gateway
+  profiles:
+    active: dev
+  cloud:
+    gateway:
+      routes:
+        - id: user-service-login
+          uri: 'lb://USER-SERVICE'
+          filters:
+            - UserRole=
+          predicates:
+            - Path=/users/login
+        - id: user-service-info
+          uri: 'lb://USER-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN
+          predicates:
+            - Path=/users/**
+        - id: instrument-service
+          uri: 'lb://INSTRUMENT-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
+          predicates:
+            - Path=/instrument/**
+        - id: market-service-create
+          uri: 'lb://MARKET-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN, ROLE_MAINTAINER
+          predicates:
+            - Path=/market
+            - Method=POST
+        - id: market-service-info
+          uri: 'lb://MARKET-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
+          predicates:
+            - Path=/market/**
+        - id: market-instrument-id-service
+          uri: 'lb://MARKET-INSTRUMENT-ID-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
+          predicates:
+            - Path=/marketInstrumentId/**
+    config:
+      label: master
+  config:
+    import: "configserver:${config.url}"
+
+jwt:
+  secret: "SS1GVUNLSU5HLUxPVkUtU1BSSU5HLUFORC1IT1ctSVQtSVMtTElURVJBTExZLU1BR0lDQUxMWS1XT1JLUy1BTkQtRkFJTFMtV0lUSC1DUllQVElELUVYQ0VQVElPTlM="
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${discovery.url}
