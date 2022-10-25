@@ -1,34 +1,42 @@
 package ru.itmo.lab2.market_instrument_id_service.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Getter
 @Setter
 @Table(name = "market_instrument_id")
-public class MarketInstrumentId {
+public class MarketInstrumentId implements Persistable<UUID> {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column("id")
     private UUID id;
 
-    @Column(name = "id_market")
+    @Column("id_market")
     private UUID idMarket;
 
-    @Column(name = "id_instrument")
+    @Column("id_instrument")
     private UUID idInstrument;
 
-    @Column(name = "currency", nullable = false)
+    @Column("currency")
     private String currency;
 
-    @Column(name = "deleted", nullable = false)
+    @Column("deleted")
     private Boolean deleted = false;
+
+    @Override
+    public boolean isNew() {
+        boolean isNew = (this.id ==  null);
+        if (isNew){
+            this.setId(UUID.randomUUID());
+        }
+        return isNew;
+    }
 }

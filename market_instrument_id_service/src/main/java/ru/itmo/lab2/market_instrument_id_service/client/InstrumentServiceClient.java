@@ -1,6 +1,6 @@
 package ru.itmo.lab2.market_instrument_id_service.client;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Mono;
@@ -9,8 +9,7 @@ import ru.itmo.lab2.market_instrument_id_service.model.dto.InstrumentPatchDto;
 
 import java.util.UUID;
 
-//todo change url
-@ReactiveFeignClient(name = "instrument", url = "http://localhost:8081")
+@ReactiveFeignClient("INSTRUMENT-SERVICE")
 public interface InstrumentServiceClient {
 
 //    @GetMapping("/instrument")
@@ -18,11 +17,11 @@ public interface InstrumentServiceClient {
 //                                    @RequestParam(value = "size", required = false) Integer size);
 
     @GetMapping("/instrument/{id}")
-    Mono<InstrumentDto> findById(@PathVariable UUID id);
+    Mono<InstrumentDto> findById(@PathVariable("id") UUID id);
 
     @PostMapping("/instrument")
     Mono<InstrumentDto> createInstrument(@RequestBody InstrumentDto instrument);
 
-    @PatchMapping("/instrument/{id}")
-    Mono<InstrumentDto> patchInstrument(@PathVariable UUID id, @RequestBody InstrumentPatchDto status);
+    @RequestMapping(method = RequestMethod.PUT, value = "/instrument/{id}", consumes = "application/json")
+    Mono<InstrumentDto> patchInstrument(@PathVariable("id") UUID id, InstrumentPatchDto status);
 }

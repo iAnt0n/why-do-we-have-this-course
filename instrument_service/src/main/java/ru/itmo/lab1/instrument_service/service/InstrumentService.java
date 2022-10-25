@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.itmo.lab1.instrument_service.controller.exception.InstrumentNotFoundException;
 import ru.itmo.lab1.instrument_service.model.Instrument;
 import ru.itmo.lab1.instrument_service.model.dto.InstrumentDto;
+import ru.itmo.lab1.instrument_service.model.dto.InstrumentPatchDto;
 import ru.itmo.lab1.instrument_service.model.enums.InstrumentStatus;
 import ru.itmo.lab1.instrument_service.repository.InstrumentRepository;
 
@@ -42,5 +43,12 @@ public class InstrumentService {
                 () -> new InstrumentNotFoundException(id));
         instrument.setStatus(status);
         instrumentRepository.save(instrument);
+    }
+
+    public InstrumentDto patch(UUID id, InstrumentPatchDto instrumentPatchDto) {
+        Instrument instrument = instrumentRepository.findById(id).orElseThrow(
+                () -> new InstrumentNotFoundException(id));
+        instrument.setStatus(instrumentPatchDto.getStatus());
+        return modelMapper.map(instrumentRepository.save(instrument), InstrumentDto.class);
     }
 }

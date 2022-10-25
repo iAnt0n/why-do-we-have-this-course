@@ -1,0 +1,25 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: market-instrument-id-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      label: master
+  config:
+    import: "configserver:${config.url}"
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+
+logging:
+  level:
+    project:
+      user:
+        UserClient: DEBUG
