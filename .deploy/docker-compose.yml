@@ -12,6 +12,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    environment:
+      - JAVA_OPTS=
+        -Dserver.port=8888
 
   discovery:
     build:
@@ -31,7 +34,43 @@ services:
       start_period: 15s
     environment:
       - JAVA_OPTS=
-        -Dconfig.url=http://configserver:8888
+        -Dserver.port=8761 -Dconfig.url=http://configserver:8888
+
+  gateway:
+    build:
+      context: ../gateway
+      dockerfile: ../.deploy/Dockerfile
+    container_name: gateway
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+    environment:
+      - JAVA_OPTS=
+        -Dserver.port=9000 -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
+    ports:
+      - 9000:9000
+
+  user-service:
+    build:
+      context: ../user_service
+      dockerfile: ../.deploy/Dockerfile
+    container_name: user_service
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      user-service-db:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-service-db:5435/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+      - JAVA_OPTS=
+        -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
 
   instrument-service:
     build:
@@ -52,8 +91,6 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=none
       - JAVA_OPTS=
         -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
-    ports:
-      - 8080:8080
 
   market-service:
     build:
@@ -73,8 +110,6 @@ services:
       - SPRING_DATASOURCE_PASSWORD=postgres
       - JAVA_OPTS=
         -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
-    ports:
-      - 8081:8081
 
   market-instrument-id-service:
     build:
@@ -96,19 +131,15 @@ services:
       - JAVA_OPTS=
         -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888 -Dspring.r2dbc.url=r2dbc:postgresql://market-instrument-id-service-db:5434/postgres -Dspring.r2dbc.username=postgres -Dspring.r2dbc.password=postgres -Dspring.liquibase.url=jdbc:postgresql://market-instrument-id-service-db:5434/postgres -Dspring.liquibase.user=postgres -Dspring.liquibase.password=postgres -Dspring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
 
-    ports:
-      - 8082:8082
-
   instrument-service-db:
     image: 'postgres:13.1-alpine'
     container_name: instrument-service-db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - PGPORT=5432
     volumes:
       - instrument-service-db-data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
 
   market-service-db:
     image: 'postgres:13.1-alpine'
@@ -119,8 +150,6 @@ services:
       - PGPORT=5433
     volumes:
       - market-service-db-data:/var/lib/postgresql/data
-    ports:
-      - 5433:5433
 
   market-instrument-id-service-db:
     image: 'postgres:13.1-alpine'
@@ -131,11 +160,19 @@ services:
       - PGPORT=5434
     volumes:
       - market-instrument-id-service-db-data:/var/lib/postgresql/data
-    ports:
-      - 5434:5434
+
+  user-service-db:
+    image: 'postgres:13.1-alpine'
+    container_name: user-service-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGPORT=5435
+    volumes:
+      - user-service-db-data:/var/lib/postgresql/data
 
 volumes:
+  user-service-db-data:
   instrument-service-db-data:
   market-service-db-data:
   market-instrument-id-service-db-data:
-
