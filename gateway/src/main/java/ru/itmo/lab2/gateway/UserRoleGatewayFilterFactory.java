@@ -49,7 +49,7 @@ public class UserRoleGatewayFilterFactory extends
 
             String header = headerList.get(0);
             Optional<String> tokenOpt = jwtUtils.getJwtToken(header);
-            if (tokenOpt.isEmpty() ||!jwtUtils.validateJwtToken(tokenOpt.get())) {
+            if (tokenOpt.isEmpty() || !jwtUtils.validateJwtToken(tokenOpt.get())) {
                 ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return response.setComplete();
@@ -65,7 +65,7 @@ public class UserRoleGatewayFilterFactory extends
                 return response.setComplete();
             }
 
-            return client.findById(userId).flatMap( u -> {
+            return client.findById(userId).flatMap(u -> {
                 if (allowedRoles.contains(u.getRole())) {
                     ServerHttpRequest updatedRequest = exchange.getRequest()
                             .mutate()

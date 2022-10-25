@@ -7,8 +7,6 @@ import lombok.Setter;
 import ru.itmo.lab1.user_service.model.enums.Role;
 
 import javax.persistence.*;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity

@@ -13,7 +13,8 @@ public class LabExceptionHandler {
     @ResponseBody
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public void runtimeException(Exception ex) {}
+    public void runtimeException(Exception ex) {
+    }
 
     @ResponseBody
     @ExceptionHandler({

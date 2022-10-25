@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody UserRegDto userRegDto) {
+    public ResponseEntity<Void> registerUser(@RequestBody UserRegDto userRegDto) {
         return userService.register(userRegDto) ?
                 ResponseEntity.ok().build() :
                 ResponseEntity.badRequest().build();
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody UserRegDto userRegDto) {
+    public ResponseEntity<Void> authenticateUser(@RequestBody UserRegDto userRegDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userRegDto.getName(), userRegDto.getPassword()));
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
