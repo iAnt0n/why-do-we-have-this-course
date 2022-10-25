@@ -1,0 +1,27 @@
+server:
+  port: 0
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${discovery.url}
+
+spring:
+  application:
+    name: user-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      label: master
+  config:
+    import: "configserver:${config.url}"
+  data:
+    web:
+      pageable:
+        default-page-size: 50
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+jwt:
+  secret: "SS1GVUNLSU5HLUxPVkUtU1BSSU5HLUFORC1IT1ctSVQtSVMtTElURVJBTExZLU1BR0lDQUxMWS1XT1JLUy1BTkQtRkFJTFMtV0lUSC1DUllQVElELUVYQ0VQVElPTlM="

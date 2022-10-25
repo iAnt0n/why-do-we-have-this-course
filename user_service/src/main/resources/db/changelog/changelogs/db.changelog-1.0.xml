@@ -3,17 +3,20 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="Anton Korablin" id="1">
-        <createTable tableName="instrument">
+        <createTable tableName="user">
             <column name="id" type="UUID">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="instrument_pk"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_pk"/>
             </column>
-            <column name="isin" type="VARCHAR(12)">
+            <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="VARCHAR(255)">
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addUniqueConstraint constraintName="instrument_isin_unique" tableName="instrument" columnNames="isin"/>
+        <addUniqueConstraint constraintName="user_name_unique" tableName="user" columnNames="name"/>
     </changeSet>
 </databaseChangeLog>
