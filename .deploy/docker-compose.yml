@@ -71,7 +71,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://market-service-db:5433/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
       - JAVA_OPTS=
         -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
     ports:
@@ -88,6 +87,10 @@ services:
       discovery:
         condition: service_healthy
       market-instrument-id-service-db:
+        condition: service_started
+      instrument-service:
+        condition: service_started
+      market-service:
         condition: service_started
     environment:
       - JAVA_OPTS=
