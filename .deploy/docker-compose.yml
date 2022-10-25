@@ -55,6 +55,49 @@ services:
     ports:
       - 8080:8080
 
+  market-service:
+    build:
+      context: ../market_service
+      dockerfile: ../.deploy/Dockerfile
+    container_name: market_service
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      market-service-db:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://market-service-db:5433/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - JAVA_OPTS=
+        -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
+    ports:
+      - 8081:8081
+
+  market-instrument-id-service:
+    build:
+      context: ../market_instrument_id_service
+      dockerfile: ../.deploy/Dockerfile
+    container_name: market_instrument_id_service
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      market-instrument-id-service-db:
+        condition: service_started
+      instrument-service:
+        condition: service_started
+      market-service:
+        condition: service_started
+    environment:
+      - JAVA_OPTS=
+        -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888 -Dspring.r2dbc.url=r2dbc:postgresql://market-instrument-id-service-db:5434/postgres -Dspring.r2dbc.username=postgres -Dspring.r2dbc.password=postgres -Dspring.liquibase.url=jdbc:postgresql://market-instrument-id-service-db:5434/postgres -Dspring.liquibase.user=postgres -Dspring.liquibase.password=postgres -Dspring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
+
+    ports:
+      - 8082:8082
 
   instrument-service-db:
     image: 'postgres:13.1-alpine'
@@ -67,5 +110,32 @@ services:
     ports:
       - 5432:5432
 
+  market-service-db:
+    image: 'postgres:13.1-alpine'
+    container_name: market-service-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGPORT=5433
+    volumes:
+      - market-service-db-data:/var/lib/postgresql/data
+    ports:
+      - 5433:5433
+
+  market-instrument-id-service-db:
+    image: 'postgres:13.1-alpine'
+    container_name: market-instrument-id-service-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGPORT=5434
+    volumes:
+      - market-instrument-id-service-db-data:/var/lib/postgresql/data
+    ports:
+      - 5434:5434
+
 volumes:
   instrument-service-db-data:
+  market-service-db-data:
+  market-instrument-id-service-db-data:
+

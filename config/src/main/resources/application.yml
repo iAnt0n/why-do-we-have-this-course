@@ -7,10 +7,8 @@ spring:
     config:
       server:
         git:
-          uri: http://labvm-42-05.itmo-lab.cosm-lab.science/team-5/config-repo.git
-          skipSslValidation: true
-          username: name
-          password: pass
+          uri: https://github.com/luribina/config-repo-alternative.git
+          default-label: master
 
 management:
   endpoint:

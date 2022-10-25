@@ -1,12 +1,12 @@
 package ru.itmo.lab1.instrument_service.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.lab1.instrument_service.model.dto.InstrumentDto;
+import ru.itmo.lab1.instrument_service.model.dto.InstrumentPatchDto;
 import ru.itmo.lab1.instrument_service.service.InstrumentService;
 
 import java.util.Map;
@@ -46,5 +46,10 @@ public class InstrumentController {
     @PostMapping
     public ResponseEntity<InstrumentDto> createInstrument(@RequestBody InstrumentDto instrument) {
         return new ResponseEntity<>(instrumentService.create(instrument), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<InstrumentDto> patchInstrument(@PathVariable UUID id, @RequestBody InstrumentPatchDto status) {
+        return ResponseEntity.ok(instrumentService.patch(id, status));
     }
 }

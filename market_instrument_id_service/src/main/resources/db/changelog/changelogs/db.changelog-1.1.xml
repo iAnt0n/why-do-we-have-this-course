@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Anton Korablin" id="1.3">
+        <preConditions onFail="HALT">
+            <tableExists tableName="market_instrument_id"/>
+        </preConditions>
+
+        <addNotNullConstraint tableName="market_instrument_id"
+                              columnName="id_instrument"
+                              columnDataType="UUID"
+                              constraintName="miid_id_instrument_not_null"
+                              validate="true"/>
+    </changeSet>
+</databaseChangeLog>
