@@ -1,7 +1,6 @@
 package ru.itmo.lab2.market_service.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @RequestMapping("/market")
 @AllArgsConstructor
 public class MarketController {
-//    @Value("${spring.data.web.pageable.default-page-size}")
+    //    @Value("${spring.data.web.pageable.default-page-size}")
     private final int defaultPageSize = 50;
     private MarketService marketService;
 

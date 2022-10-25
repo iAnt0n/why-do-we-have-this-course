@@ -9,7 +9,6 @@ import ru.itmo.lab2.market_instrument_id_service.model.MarketInstrumentId;
 
 import java.util.UUID;
 
-//@Repository
 public interface MarketInstrumentIdRepository extends ReactiveCrudRepository<MarketInstrumentId, UUID> {
     Flux<MarketInstrumentId> findAllBy(Pageable pageable);
 }

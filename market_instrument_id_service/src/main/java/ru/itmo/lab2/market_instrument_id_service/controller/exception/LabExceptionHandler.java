@@ -13,7 +13,8 @@ public class LabExceptionHandler {
     @ResponseBody
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public void runtimeException(Exception ex) {}
+    public void runtimeException(Exception ex) {
+    }
 
     @ResponseBody
     @ExceptionHandler({
@@ -25,11 +26,4 @@ public class LabExceptionHandler {
     public String objectNotFoundException(Exception ex) {
         return ex.getMessage();
     }
-
-//    @ResponseBody
-//    @ExceptionHandler(BadCredentialsException.class)
-//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-//    public void badCredentialsException(Exception ex) {
-//    }
-    //TODO add other exception handlers
 }

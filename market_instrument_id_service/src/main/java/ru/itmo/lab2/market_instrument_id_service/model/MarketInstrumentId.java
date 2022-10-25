@@ -33,8 +33,8 @@ public class MarketInstrumentId implements Persistable<UUID> {
 
     @Override
     public boolean isNew() {
-        boolean isNew = (this.id ==  null);
-        if (isNew){
+        boolean isNew = (this.id == null);
+        if (isNew) {
             this.setId(UUID.randomUUID());
         }
         return isNew;

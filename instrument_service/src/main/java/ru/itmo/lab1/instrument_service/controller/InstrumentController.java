@@ -49,7 +49,7 @@ public class InstrumentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InstrumentDto> patchInstrument(@PathVariable UUID id, @RequestBody InstrumentPatchDto status){
+    public ResponseEntity<InstrumentDto> patchInstrument(@PathVariable UUID id, @RequestBody InstrumentPatchDto status) {
         return ResponseEntity.ok(instrumentService.patch(id, status));
     }
 }

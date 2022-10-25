@@ -1,6 +1,5 @@
 package ru.itmo.lab2.market_instrument_id_service.service;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -19,9 +18,6 @@ import ru.itmo.lab2.market_instrument_id_service.model.dto.MarketInstrumentIdDto
 import ru.itmo.lab2.market_instrument_id_service.model.enums.InstrumentStatus;
 import ru.itmo.lab2.market_instrument_id_service.repository.MarketInstrumentIdRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,7 +43,7 @@ public class MarketInstrumentIdService {
     @Transactional
     public Mono<MarketInstrumentIdDto> create(MarketInstrumentIdDto dto) {
         MarketInstrumentId marketInstrumentId = modelMapper.map(dto, MarketInstrumentId.class);
-       UUID instrumentId = marketInstrumentId.getIdInstrument();
+        UUID instrumentId = marketInstrumentId.getIdInstrument();
         return instrumentServiceClient.findById(instrumentId)
                 .flatMap(instrumentDto -> {
                     InstrumentStatus status = instrumentDto.getStatus() == InstrumentStatus.DELISTED

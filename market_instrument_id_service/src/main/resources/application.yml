@@ -17,9 +17,3 @@ feign:
     config:
       default:
         loggerLevel: full
-
-logging:
-  level:
-    project:
-      user:
-        UserClient: DEBUG
