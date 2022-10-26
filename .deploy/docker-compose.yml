@@ -131,6 +131,25 @@ services:
       - JAVA_OPTS=
         -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888 -Dspring.r2dbc.url=r2dbc:postgresql://market-instrument-id-service-db:5434/postgres -Dspring.r2dbc.username=postgres -Dspring.r2dbc.password=postgres -Dspring.liquibase.url=jdbc:postgresql://market-instrument-id-service-db:5434/postgres -Dspring.liquibase.user=postgres -Dspring.liquibase.password=postgres -Dspring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
 
+  trade-service:
+    build:
+      context: ../trade_service
+      dockerfile: ../.deploy/Dockerfile
+    container_name: trade_service
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      trade-service-db:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://trade-service-db:5436/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - JAVA_OPTS=
+        -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
+
   instrument-service-db:
     image: 'postgres:13.1-alpine'
     container_name: instrument-service-db
@@ -171,8 +190,19 @@ services:
     volumes:
       - user-service-db-data:/var/lib/postgresql/data
 
+  trade-service-db:
+    image: 'postgres:13.1-alpine'
+    container_name: trade-service-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGPORT=5436
+    volumes:
+      - trade-service-db-data:/var/lib/postgresql/data
+
 volumes:
   user-service-db-data:
   instrument-service-db-data:
   market-service-db-data:
   market-instrument-id-service-db-data:
+  trade-service-db-data:

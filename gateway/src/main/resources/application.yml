@@ -43,6 +43,18 @@ spring:
             - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
           predicates:
             - Path=/marketInstrumentId/**
+        - id: trade-service
+          uri: 'lb://TRADE-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
+          predicates:
+            - Path=/trade/**
+        - id: portfolio-service
+          uri: 'lb://TRADE-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
+          predicates:
+            - Path=/portfolio/**
     config:
       label: master
   config:

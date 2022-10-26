@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Anton Korablin" id="1">
+        <createTable tableName="portfolio">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="portfolio_pk"/>
+            </column>
+            <column name="id_user" type="UUID"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="trade">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="trade_pk"/>
+            </column>
+            <column name="id_miid" type="UUID"/>
+            <column name="id_order" type="UUID"/>
+            <column name="id_portfolio" type="UUID"/>
+            <column name="volume" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="id_portfolio" baseTableName="trade" constraintName="trade_id_portfolio_fk"  referencedColumnNames="id" referencedTableName="portfolio"/>
+
+    </changeSet>
+</databaseChangeLog>
