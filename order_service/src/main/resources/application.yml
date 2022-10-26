@@ -1,0 +1,14 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: order-service
+  profiles:
+    active: dev
+  cloud:
+    config:
+      label: master
+  config:
+    import: "configserver:${config.url}"
+
