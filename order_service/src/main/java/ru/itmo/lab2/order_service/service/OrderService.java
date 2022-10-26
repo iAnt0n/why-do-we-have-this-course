@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.lab2.order_service.client.TradeClient;
 import ru.itmo.lab2.order_service.controller.exception.OrderNotFoundException;
 import ru.itmo.lab2.order_service.controller.exception.OrderStatusConflictException;
+import ru.itmo.lab2.order_service.controller.exception.TradeServiceNotAvailableException;
 import ru.itmo.lab2.order_service.model.Order;
 import ru.itmo.lab2.order_service.model.dto.OrderDto;
 import ru.itmo.lab2.order_service.model.dto.TradeDto;
@@ -101,10 +102,12 @@ public class OrderService {
                 tradeDto.setIdMiid(order.getIdMiid());
                 tradeDto.setPrice(order.getPrice());
                 tradeDto.setVolume(order.getVolume());
-                tradeDto.setIdOrderId(order.getId());
-                tradeDto.setIdUserId(order.getIdUser());
+                tradeDto.setIdOrder(order.getId());
+                tradeDto.setIdUser(order.getIdUser());
 
-                tradeClient.createTrade(tradeDto).block();
+                if (tradeClient.createTrade(tradeDto) == null) {
+                    throw new TradeServiceNotAvailableException();
+                }
             }
         }
         return modelMapper.map(order, OrderDto.class);

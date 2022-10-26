@@ -62,6 +62,12 @@ spring:
             - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
           predicates:
             - Path=/portfolio/**
+        - id: portfolio-service
+          uri: 'lb://ORDER-SERVICE'
+          filters:
+            - UserRole=ROLE_ADMIN, ROLE_MAINTAINER, ROLE_TRADER
+          predicates:
+            - Path=/order/**
     config:
       label: master
   config:

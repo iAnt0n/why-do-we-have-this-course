@@ -14,8 +14,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class OrderDto implements Serializable {
     private UUID id;
-    private UUID idMiidId;
-    private UUID idUserId;
+    private UUID idMiid;
+    private UUID idUser;
     private OrderStatus status;
     private OrderType orderType;
     private Integer volume;

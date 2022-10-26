@@ -13,7 +13,14 @@ public class LabExceptionHandler {
     @ResponseBody
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public void runtimeException(Exception ex) {}
+    public void runtimeException(Exception ex) {
+    }
+
+    @ResponseBody
+    @ExceptionHandler(TradeServiceNotAvailableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public void serviceNotAvailableException(Exception ex) {
+    }
 
     @ResponseBody
     @ExceptionHandler({
