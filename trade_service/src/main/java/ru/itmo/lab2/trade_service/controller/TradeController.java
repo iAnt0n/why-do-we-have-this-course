@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 import ru.itmo.lab2.trade_service.model.dto.TradeDto;
 import ru.itmo.lab2.trade_service.model.enums.Role;
 import ru.itmo.lab2.trade_service.service.TradeService;
@@ -22,52 +23,50 @@ public class TradeController {
     private TradeService tradeService;
 
     @GetMapping
-    public ResponseEntity<Object> findAll(@RequestHeader("x-user-id") UUID userId,
-                                          @RequestHeader("x-user-role") Role userRole,
-                                          @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                          @RequestParam(value = "size", required = false) Integer size) {
+    public Mono<ResponseEntity<?>> findAll(@RequestHeader("x-user-id") UUID userId,
+                                           @RequestHeader("x-user-role") Role userRole,
+                                           @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                           @RequestParam(value = "size", required = false) Integer size) {
         boolean highAuth = (userRole == Role.ROLE_ADMIN || userRole == Role.ROLE_MAINTAINER);
 
         boolean isInfiniteScroll = size == null;
-        Page<TradeDto> tradePage = highAuth ?
+        Mono<Page<TradeDto>> tradePageMono = highAuth ?
                 tradeService.findAll(page, isInfiniteScroll ? defaultPageSize : size) :
                 tradeService.findAllByIdUser(userId, page, isInfiniteScroll ? defaultPageSize : size);
 
-        if (tradePage.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        if (!isInfiniteScroll) {
-            return ResponseEntity.ok()
-                    .header("x-total-count", String.valueOf(tradePage.getTotalElements()))
-                    .body(tradePage.getContent());
-        }
-        return ResponseEntity.ok().body(Map.of(
-                "items", tradePage.getContent(),
-                "hasMore", !tradePage.isLast()
-        ));
+        return tradePageMono.map(tradePage -> {
+            if (!isInfiniteScroll) {
+                return ResponseEntity.ok()
+                        .header("x-total-count", String.valueOf(tradePage.getTotalElements()))
+                        .body(tradePage.getContent());
+            }
+            return ResponseEntity.ok().body(Map.of(
+                    "items", tradePage.getContent(),
+                    "hasMore", !tradePage.isLast())
+            );
+        }).switchIfEmpty(Mono.just(ResponseEntity.noContent().build()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TradeDto> findById(@RequestHeader("x-user-id") UUID userId,
-                                             @RequestHeader("x-user-role") Role userRole,
-                                             @PathVariable UUID id) {
-        TradeDto tradeDto = tradeService.findById(id);
-        return isAllowed(userId, userRole, tradeDto.getId()) ?
+    public Mono<ResponseEntity<TradeDto>> findById(@RequestHeader("x-user-id") UUID userId,
+                                                   @RequestHeader("x-user-role") Role userRole,
+                                                   @PathVariable UUID id) {
+        return tradeService.findById(id).map(tradeDto -> isAllowed(userId, userRole, tradeDto.getId()) ?
                 ResponseEntity.ok(tradeDto) :
-                new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                new ResponseEntity<>(HttpStatus.FORBIDDEN));
     }
 
     @PostMapping
-    public ResponseEntity<TradeDto> createTrade(@RequestHeader("x-user-id") UUID userId,
-                                                @RequestHeader("x-user-role") Role userRole,
-                                                @RequestBody TradeDto trade) {
+    public Mono<ResponseEntity<TradeDto>> createTrade(@RequestHeader("x-user-id") UUID userId,
+                                                      @RequestHeader("x-user-role") Role userRole,
+                                                      @RequestBody TradeDto trade) {
         if (trade.getIdUserId() == null) {
             trade.setIdUserId(userId);
         }
-
-        return isAllowed(userId, userRole, trade.getIdUserId()) ?
-                new ResponseEntity<>(tradeService.createExternal(trade), HttpStatus.CREATED) :
-                new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if (!isAllowed(userId, userRole, trade.getIdUserId())) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.FORBIDDEN));
+        }
+        return tradeService.createExternal(trade).map(tradeDto -> new ResponseEntity<>(tradeDto, HttpStatus.CREATED));
     }
 
     private boolean isAllowed(UUID userId, Role userRole, UUID portfolioUserId) {
