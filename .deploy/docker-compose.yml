@@ -36,22 +36,6 @@ services:
       - JAVA_OPTS=
         -Dserver.port=8761 -Dconfig.url=http://configserver:8888
 
-  gateway:
-    build:
-      context: ../gateway
-      dockerfile: ../.deploy/Dockerfile
-    container_name: gateway
-    depends_on:
-      configserver:
-        condition: service_healthy
-      discovery:
-        condition: service_healthy
-    environment:
-      - JAVA_OPTS=
-        -Dserver.port=9000 -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
-    ports:
-      - 9000:9000
-
   user-service:
     build:
       context: ../user_service
@@ -71,6 +55,24 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=none
       - JAVA_OPTS=
         -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
+
+  gateway:
+    build:
+      context: ../gateway
+      dockerfile: ../.deploy/Dockerfile
+    container_name: gateway
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+    environment:
+      - JAVA_OPTS=
+        -Dserver.port=9000 -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
+    ports:
+      - 9000:9000
 
   instrument-service:
     build:
@@ -150,6 +152,27 @@ services:
       - JAVA_OPTS=
         -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
 
+  order-service:
+    build:
+      context: ../order_service
+      dockerfile: ../.deploy/Dockerfile
+    container_name: order_service
+    depends_on:
+      configserver:
+        condition: service_healthy
+      discovery:
+        condition: service_healthy
+      trade-service:
+        condition: service_started
+      order-service-db:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://order-service-db:5437/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - JAVA_OPTS=
+        -Ddiscovery.url=http://discovery:8761/eureka -Dconfig.url=http://configserver:8888
+
   instrument-service-db:
     image: 'postgres:13.1-alpine'
     container_name: instrument-service-db
@@ -200,9 +223,20 @@ services:
     volumes:
       - trade-service-db-data:/var/lib/postgresql/data
 
+  order-service-db:
+    image: 'postgres:13.1-alpine'
+    container_name: order-service-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGPORT=5437
+    volumes:
+      - order-service-db-data:/var/lib/postgresql/data
+
 volumes:
   user-service-db-data:
   instrument-service-db-data:
   market-service-db-data:
   market-instrument-id-service-db-data:
   trade-service-db-data:
+  order-service-db-data:

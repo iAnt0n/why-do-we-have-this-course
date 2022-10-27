@@ -28,43 +28,43 @@ public class TradeService {
     public Mono<Page<TradeDto>> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return Mono.fromCallable(() -> tradeRepository.findAll(pageable)
-                .map(trade -> modelMapper.map(trade, TradeDto.class)))
+                        .map(trade -> modelMapper.map(trade, TradeDto.class)))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<TradeDto> findById(UUID id) {
-        return Mono.fromCallable(() ->tradeRepository.findById(id).map(trade -> modelMapper.map(trade, TradeDto.class))
-                .orElseThrow(() -> new TradeNotFoundException(id)))
+        return Mono.fromCallable(() -> tradeRepository.findById(id).map(trade -> modelMapper.map(trade, TradeDto.class))
+                        .orElseThrow(() -> new TradeNotFoundException(id)))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<Page<TradeDto>> findAllByIdUser(UUID id, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return Mono.fromCallable(()->tradeRepository.findAllByIdUser(id, pageable)
-                .map(trade -> modelMapper.map(trade, TradeDto.class)))
+        return Mono.fromCallable(() -> tradeRepository.findAllByIdUser(id, pageable)
+                        .map(trade -> modelMapper.map(trade, TradeDto.class)))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<TradeDto> createExternal(TradeDto dto) {
+        if (dto.getIdPortfolioId() != null || dto.getIdOrderId() != null) {
+            throw new TradeManualCreationException();
+        }
+        return create(dto);
+    }
+
+    public Mono<TradeDto> create(TradeDto dto) {
         return Mono.fromCallable(() -> {
-            if (dto.getIdPortfolioId() != null || dto.getIdOrderId() != null) {
-                throw new TradeManualCreationException();
+            Trade trade = modelMapper.map(dto, Trade.class);
+            trade.setId(UUID.randomUUID());
+            if (trade.getCreatedDatetime() == null) {
+                trade.setCreatedDatetime(Instant.now());
             }
-            return create(dto);
+            return modelMapper.map(tradeRepository.save(trade), TradeDto.class);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    public TradeDto create(TradeDto dto) {
-        Trade trade = modelMapper.map(dto, Trade.class);
-        trade.setId(UUID.randomUUID());
-        if (trade.getCreatedDatetime() == null) {
-            trade.setCreatedDatetime(Instant.now());
-        }
-        return modelMapper.map(tradeRepository.save(trade), TradeDto.class);
-    }
-
     public Mono<Object> setPortfolio(UUID tradeId, Optional<Portfolio> portfolio) {
-        return Mono.fromCallable(()-> {
+        return Mono.fromCallable(() -> {
             Trade trade = tradeRepository.findById(tradeId).orElseThrow(() -> new TradeNotFoundException(tradeId));
             trade.setIdPortfolio(portfolio.orElse(null));
             trade = tradeRepository.save(trade);

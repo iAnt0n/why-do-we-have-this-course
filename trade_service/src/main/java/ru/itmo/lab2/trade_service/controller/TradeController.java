@@ -69,6 +69,11 @@ public class TradeController {
         return tradeService.createExternal(trade).map(tradeDto -> new ResponseEntity<>(tradeDto, HttpStatus.CREATED));
     }
 
+    @PostMapping("/internal")
+    public Mono<ResponseEntity<TradeDto>> createTrade(@RequestBody TradeDto trade) {
+        return tradeService.create(trade).map(tradeDto -> new ResponseEntity<>(tradeDto, HttpStatus.CREATED));
+    }
+
     private boolean isAllowed(UUID userId, Role userRole, UUID portfolioUserId) {
         boolean highAuth = (userRole == Role.ROLE_ADMIN);
         boolean isSameUser = userId.equals(portfolioUserId);
