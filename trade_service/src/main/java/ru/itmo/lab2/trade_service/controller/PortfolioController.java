@@ -83,7 +83,7 @@ public class PortfolioController {
         return portfolioService.delete(id).map(o -> ResponseEntity.ok().build());
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public Mono<ResponseEntity<PortfolioDto>> patchPortfolio(@RequestHeader("x-user-id") UUID userId,
                                                        @RequestHeader("x-user-role") Role userRole,
                                                        @PathVariable UUID id, @RequestBody PortfolioPatchDto patch) {

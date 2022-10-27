@@ -6,13 +6,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-service-register
-          uri: 'lb://USER-SERVICE'
-          filters:
-            - UserRole=
-          predicates:
-            - Path=/users
-            - Method=POST
         - id: user-service-login
           uri: 'lb://USER-SERVICE'
           filters:
