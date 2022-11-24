@@ -11,3 +11,13 @@ spring:
       label: master
   config:
     import: "configserver:${config.url}"
+
+opentracing:
+  jaeger:
+    udp-sender:
+      host: jaeger
+      port: 6831
+    log-spans: true
+
+springdoc:
+  version: '@springdoc.version@'

@@ -12,3 +12,10 @@ management:
   endpoint:
     health:
       enabled: true
+
+opentracing:
+  jaeger:
+    udp-sender:
+      host: jaeger
+      port: 6831
+    log-spans: true
