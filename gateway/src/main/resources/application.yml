@@ -6,5 +6,29 @@ spring:
   cloud:
     config:
       label: master
+    gateway:
+      discovery:
+        locator:
+          enabled: true
   config:
     import: "configserver:${config.url}"
+
+springdoc:
+  version: '@springdoc.version@'
+  swagger-ui:
+    use-root-path: true
+    urls:
+      - name: market
+        url: /market/v3/api-docs
+      - name: trade
+        url: /trade/v3/api-docs
+      - name: users
+        url: /users/v3/api-docs
+
+opentracing:
+  jaeger:
+    udp-sender:
+      host: jaeger
+      port: 6831
+    log-spans: true
+

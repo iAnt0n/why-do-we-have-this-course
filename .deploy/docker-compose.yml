@@ -233,6 +233,15 @@ services:
     volumes:
       - order-service-db-data:/var/lib/postgresql/data
 
+  # --------------------------
+  # - Monitoring and tracing -
+  # --------------------------
+  jaeger:
+    image: jaegertracing/all-in-one:1.17
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+
 volumes:
   user-service-db-data:
   instrument-service-db-data:

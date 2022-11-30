@@ -76,6 +76,16 @@
             <artifactId>liquibase-core</artifactId>
             <version>4.16.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
+            <version>3.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-webmvc-core</artifactId>
+            <version>1.6.13</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
