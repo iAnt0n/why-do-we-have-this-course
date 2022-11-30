@@ -3,7 +3,8 @@ FROM maven:3.8.6-eclipse-temurin-17-alpine as build
 WORKDIR /app
 COPY ./src ./src
 COPY ./pom.xml .
-RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests
+ENV DOCKER_HOST=tcp://172.17.0.1:2376
+RUN mvn clean package
 
 RUN jar -xf target/*.jar
 
