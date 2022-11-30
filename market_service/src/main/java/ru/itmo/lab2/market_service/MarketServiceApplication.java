@@ -9,7 +9,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 public class MarketServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MarketServiceApplication.class, args);
+        SpringApplication.run(MarketServiceApplication.class, args)
     }
 
 }
