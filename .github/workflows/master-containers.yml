@@ -16,21 +16,21 @@ jobs:
           - image: ghcr.io/iAnt0n/gateway
             context : gateway/
           - image: ghcr.io/iAnt0n/instrument-service
-              context: instrument_service/
+            context: instrument_service/
           - image: ghcr.io/iAnt0n/market-instrument-id-service
-              context: market_instrument_id_service/
+            context: market_instrument_id_service/
           - image: ghcr.io/iAnt0n/market-service
-              context: market_service/
+            context: market_service/
           - image: ghcr.io/iAnt0n/order-service
-              context: order_service/
+            context: order_service/
           - image: ghcr.io/iAnt0n/trade-service
-              context: trade_service/
+            context: trade_service/
           - image: ghcr.io/iAnt0n/user_service
-              context: user_service/
+            context: user_service/
           - image: ghcr.io/iAnt0n/config-service
-              context: config/
+            context: config/
           - image: ghcr.io/iAnt0n/discovery
-              context: discovery/
+            context: discovery/
     steps:
       - name: dirty-dirty docker
         run: |
