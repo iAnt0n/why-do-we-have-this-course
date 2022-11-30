@@ -9,6 +9,11 @@ jobs:
   merge-and-build:
     runs-on: ubuntu-latest
     steps:
+      - name: dirty-dirty docker hacks
+        run: |
+          echo '{"hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2375"]}' | sudo tee -a /etc/docker/daemon.json
+          sudo daemon-reload
+          sudo systemctl restart docker.service
       - name: merge
         uses: actions/checkout@v3
       - name: build
