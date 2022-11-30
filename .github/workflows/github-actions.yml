@@ -1,0 +1,15 @@
+name: Merge and build with unit tests
+run-name: ${{ github.actor }} is building his PR against master
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  merge-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: merge
+        uses: actions/checkout@v3
+      - name: build
+        run: docker-compose -f .deploy/docker-compose.yml build
