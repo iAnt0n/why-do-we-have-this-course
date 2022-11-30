@@ -9,7 +9,15 @@ jobs:
   merge-and-build:
     runs-on: ubuntu-latest
     steps:
+      - name: dirty-dirty docker
+        run : |
+          sudo mkdir -p /etc/systemd/system/docker.service.d/
+          sudo touch /etc/systemd/system/docker.service.d/docker.conf
+          echo -e '[Service]\nExecStart=\nExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2376\n' | sudo tee -a /etc/systemd/system/docker.service.d/docker.conf
+          sudo systemctl daemon-reload
+          sudo systemctl restart docker.service
+          ps -aux | grep docker
       - name: merge
         uses: actions/checkout@v3
       - name: build
-        run: docker-compose -f .deploy/docker-compose.yml build
+        run: docker-compose -f .deploy/docker-compose.yml build instrument-service
