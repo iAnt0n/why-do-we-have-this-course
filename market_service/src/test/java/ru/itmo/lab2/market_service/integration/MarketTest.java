@@ -95,7 +95,7 @@ public class MarketTest {
     public void getNoParams() throws Exception {
         mockMvc.perform(get("/market")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(header().doesNotExist("x-total-count"))
                 .andExpect(jsonPath("$.hasMore").value(false))
