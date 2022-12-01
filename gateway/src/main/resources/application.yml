@@ -32,3 +32,13 @@ opentracing:
       port: 6831
     log-spans: true
 
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: prometheus

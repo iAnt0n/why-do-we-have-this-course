@@ -22,3 +22,9 @@ opentracing:
 
 springdoc:
   version: '@springdoc.version@'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
